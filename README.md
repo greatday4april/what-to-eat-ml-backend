@@ -4,9 +4,11 @@ Backend for a ML-based restaurant recommendation app
 
 ## Setup
 
-1. Install Python 3.6+, run `pip install pipenv`
+1. Install Python 3.6+ and PostgreSQL, run `pip install pipenv`
 
-2. For starters,
+2. in your terminal, run `psql` and then `CREATE DATABASE what_to_eat;`
+
+3. For starters,
 
 ```Bash
 # Example workflow for contributing to a project:
@@ -18,6 +20,9 @@ $ pipenv install
 
 # creates and enable virtual environment
 $ pipenv shell
+
+# setup the database
+$ python manage.py migrate
 ```
 
 3. Install Python extension for VS Code, and then select the intepreter as the one with `pipenv` ( command+shift+p "Python: Select Intepreter)
@@ -31,7 +36,7 @@ $ pipenv shell
         "type": "python",
         "request": "launch",
         "program": "${workspaceFolder}/manage.py",
-        "args": ["runserver", "--noreload"],
+        "args": ["runserver"],
         "django": true,
         "console": "internalConsole"
       },
@@ -51,13 +56,19 @@ and add this to settings.json as well
     // Google the following if you are not using MacOS
     "terminal.integrated.env.osx": {
         "DJANGO_SETTINGS_MODULE": "what_to_eat.settings",
-        "PYTHONPATH": "${workspaceFolder}"
+        "PYTHONPATH": "${workspaceFolder}:."
     },
 ```
 
 5. If you don't know the syntax of Python yet, https://www.youtube.com/watch?v=YYXdXT2l-Gg&list=PL-osiE80TeTskrapNbzXhwoFUiLCjGgY7 is a good start
 
 6. A good resource for writing beautiful Python Code: https://realpython.com/python-pep8/
+
+## run and debug django
+
+1. run the "Python : Django" debugger from vscode, or `python3 manage.py runserver`, then visit `http://127.0.0.1:8000`
+
+2. when running "Python : Django" debugger, you can also use the DEBUG CONSOLE in vscode as your console
 
 ## development
 
