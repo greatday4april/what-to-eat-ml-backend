@@ -30,8 +30,16 @@ $ python manage.py migrate
 4. Add this part for your configurations in settings.json
 
 ```JSON
+    // This is for running single python file
+    {
+        "type": "python",
+        "request": "launch",
+        "name": "Python",
+        "program": "${file}",
+        "console": "internalConsole",
+    },
     // This part is for debugging django server
-      {
+    {
         "name": "Python : Django",
         "type": "python",
         "request": "launch",
@@ -39,7 +47,7 @@ $ python manage.py migrate
         "args": ["runserver"],
         "django": true,
         "console": "internalConsole"
-      },
+    },
 ```
 
 and add this to settings.json as well
@@ -64,11 +72,13 @@ and add this to settings.json as well
 
 6. A good resource for writing beautiful Python Code: https://realpython.com/python-pep8/
 
-## run and debug django
+## run and debug django backend
 
 1. run the "Python : Django" debugger from vscode, or `python3 manage.py runserver`, then visit `http://127.0.0.1:8000`
 
-2. when running "Python : Django" debugger, you can also use the DEBUG CONSOLE in vscode as your console
+2. when running "Python : Django" debugger option, you can also use the DEBUG CONSOLE in vscode as your console (similar to rails c)
+
+3. you can also write tests in `tests.py` so you can write some test code for models etc and use "Python" debugger option to run it, or just `python3 tests.py`
 
 ## development
 
