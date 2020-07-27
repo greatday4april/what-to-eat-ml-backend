@@ -107,20 +107,19 @@ Good luck coding! and ... lots of debugging probably.
 
 ### `preference`
 
-| column name     | data type | details |
-| --------------- | :-------: | ------: |
-| `id`            |  Number   |         |
-| `restaurant_id` |   Text    |         |
-| `type`          |   Text    |         |
-| `created_at`    | Date/time |         |
-| `user`          |  Number   |         |
+| column name     |  data type   | details |
+| --------------- | :----------: | ------: |
+| `id`            |    Number    |         |
+| `restaurant_id` |     Text     |         |
+| `type`          |     Text     |         |
+| `created_at`    |  Date/time   |         |
+| `user`          | Reference_id |         |
 
 ### `user`
 
 | column name     | data type | details |
 | --------------- | :-------: | ------: |
 | `id`            |  Number   |         |
-| `password`      |   Text    |         |
 | `last_login`    | Date/time |         |
 | `session_token` |   Text    |         |
 | `date_joined`   | Date/time |         |
