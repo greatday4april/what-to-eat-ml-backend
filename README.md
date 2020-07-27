@@ -63,7 +63,7 @@ and add this to settings.json as well
     "terminal.integrated.inheritEnv": true,
     // Google the following if you are not using MacOS
     "terminal.integrated.env.osx": {
-        "DJANGO_SETTINGS_MODULE": "what_to_eat.settings",
+        "DJANGO_SETTINGS_MODULE": "config.settings",
         "PYTHONPATH": "${workspaceFolder}:."
     },
 ```
@@ -102,3 +102,25 @@ $ git push
 4. Google and StackOverflow are your best friends
 
 Good luck coding! and ... lots of debugging probably.
+
+## Postgres Database Schema
+
+### `preference`
+
+| column name     | data type | details |
+| --------------- | :-------: | ------: |
+| `id`            |  Number   |         |
+| `restaurant_id` |   Text    |         |
+| `type`          |   Text    |         |
+| `created_at`    | Date/time |         |
+| `user`          |  Number   |         |
+
+### `user`
+
+| column name     | data type | details |
+| --------------- | :-------: | ------: |
+| `id`            |  Number   |         |
+| `password`      |   Text    |         |
+| `last_login`    | Date/time |         |
+| `session_token` |   Text    |         |
+| `date_joined`   | Date/time |         |
