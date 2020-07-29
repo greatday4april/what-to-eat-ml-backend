@@ -123,3 +123,16 @@ Good luck coding! and ... lots of debugging probably.
 | `last_login`    | Date/time |         |
 | `session_token` |   Text    |         |
 | `date_joined`   | Date/time |         |
+
+
+
+## Content-based Recommender 
+
+1. download the csv and jupyter notebook, recommended in the same folder 
+2. make sure jupyter notebook is installed
+3. type "jupyter notebook" in console and hit enter
+4. execute each chunk of code in the notebook, observe the results
+5. tweak the parameters/output/input in python code
+6. check your own interetsing results
+
+
