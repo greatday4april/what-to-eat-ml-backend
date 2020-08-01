@@ -64,7 +64,8 @@ and add this to settings.json as well
     // Google the following if you are not using MacOS
     "terminal.integrated.env.osx": {
         "DJANGO_SETTINGS_MODULE": "config.settings",
-        "PYTHONPATH": "${workspaceFolder}:."
+        "PYTHONPATH": "${workspaceFolder}:.",
+        "YELP_API_KEY":  // enter the YELP api key here
     },
 ```
 
@@ -124,15 +125,9 @@ Good luck coding! and ... lots of debugging probably.
 | `session_token` |   Text    |         |
 | `date_joined`   | Date/time |         |
 
+## Content-based Recommendation
 
-
-## Content-based Recommender 
-
-1. download the csv and jupyter notebook, recommended in the same folder 
-2. make sure jupyter notebook is installed
-3. type "jupyter notebook" in console and hit enter
-4. execute each chunk of code in the notebook, observe the results
-5. tweak the parameters/output/input in python code
-6. check your own interetsing results
-
-
+1. make sure Python extension is installed in VS Code and you have done `pipenv install`
+2. open the `.ipynb` file in VS Code, and choose to trust the file
+3. execute each chunk of code in the notebook, observe the results
+4. tweak the parameters/output/input in python code and check your own interesting results

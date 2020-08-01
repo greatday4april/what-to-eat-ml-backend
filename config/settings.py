@@ -15,7 +15,7 @@ import os
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-AUTH_USER_MODEL = 'backend.User'
+AUTH_USER_MODEL = 'api.User'
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'corsheaders',
     'rest_framework',
-    'backend'
+    'api'
 ]
 
 MIDDLEWARE = [
@@ -127,3 +127,16 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/static/'
+
+CACHE_TTL = 60 * 60  # 1 hour
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'TIMEOUT': CACHE_TTL,
+    }
+}
+
+SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
+
+SESSION_SAVE_EVERY_REQUEST = True

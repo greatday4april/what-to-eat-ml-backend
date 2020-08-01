@@ -5,11 +5,11 @@ import django
 
 
 def test_models():
-    from backend.models import User, Preference
-    u = User(session_token='abc')
+    from api.models import User, Preference, PreferenceType
+    u = User()
     u.save()
     print(u)
-    pref = Preference(user=u, restaurant_id='xyz', score=3)
+    pref = Preference(user=u, restaurant_id='xyz', type=PreferenceType.LIKE)
     pref.save()
     print(pref)
 
