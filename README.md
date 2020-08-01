@@ -2,7 +2,7 @@
 
 Backend for a ML-based restaurant recommendation app
 
-## [Development Setup Instructions](https://github.com/greatday4april/what-to-eat-ml-backend/wiki/Development-Setup
+## [Development Setup Instructions](https://github.com/greatday4april/what-to-eat-ml-backend/wiki/Development-Setup)
 
 ## run and debug django backend
 
