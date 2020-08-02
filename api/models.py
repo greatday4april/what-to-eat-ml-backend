@@ -45,9 +45,10 @@ class Preference(models.Model):
 
 
 class Session():
-    def __init__(self, user_id: int):
-        self.user = User.objects.get(id=user_id)
+    def __init__(self, user_id: int, page_size: Optional[int]):
         yelp_response = yelp_api_utils.search().get('businesses')
+        self.user = User.objects.get(id=user_id)
+        self.page_size = page_size if page_size else 2
         self.preferences: Dict[str, Preference] = {}
         self.restaurants: List[Dict] = list(yelp_response)
 
@@ -69,12 +70,12 @@ class Session():
         return self
 
     @property
-    def next_restaurant(self) -> Optional[Dict]:
+    def next_restaurants(self) -> Optional[List[Dict]]:
         pool = [item for item in self.restaurants if item['id'] not in self.preferences]
         if len(pool) == 0:
             return None
-        restaurant = random.choice(pool)
-        return yelp_api_utils.get_business(restaurant['id'])
+        restaurants = random.choices(pool, k=self.page_size)
+        return [yelp_api_utils.get_business(restaurant['id']) for restaurant in restaurants]
 
     def save(self) -> 'Session':
         store = SessionStore(session_key=self.user.session_key)
