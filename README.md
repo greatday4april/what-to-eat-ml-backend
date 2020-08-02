@@ -2,76 +2,7 @@
 
 Backend for a ML-based restaurant recommendation app
 
-## Setup
-
-1. Install Python 3.6+ and PostgreSQL, run `pip install pipenv`
-
-2. in your terminal, run `psql` and then `CREATE DATABASE what_to_eat;`
-
-3. For starters,
-
-```Bash
-# Example workflow for contributing to a project:
-$ git clone https://github.com/greatday4april/what-to-eat-ml-backend.git
-$ cd what-to-eat-ml-backend
-
-# install all required packages
-$ pipenv install
-
-# creates and enable virtual environment
-$ pipenv shell
-
-# setup the database
-$ python manage.py migrate
-```
-
-3. Install Python extension for VS Code, and then select the intepreter as the one with `pipenv` ( command+shift+p "Python: Select Intepreter)
-
-4. Add this part for your configurations in settings.json
-
-```JSON
-    // This is for running single python file
-    {
-        "type": "python",
-        "request": "launch",
-        "name": "Python",
-        "program": "${file}",
-        "console": "internalConsole",
-    },
-    // This part is for debugging django server
-    {
-        "name": "Python : Django",
-        "type": "python",
-        "request": "launch",
-        "program": "${workspaceFolder}/manage.py",
-        "args": ["runserver"],
-        "django": true,
-        "console": "internalConsole"
-    },
-```
-
-and add this to settings.json as well
-
-```JSON
-    "python.linting.flake8Enabled": true,
-    "python.linting.pylintEnabled": false,
-    "python.linting.pycodestyleEnabled": true,
-    "python.linting.pycodestyleArgs": [
-        "--ignore=E501"
-    ],
-    "python.envFile": "${workspaceFolder}/.env",
-    "terminal.integrated.inheritEnv": true,
-    // Google the following if you are not using MacOS
-    "terminal.integrated.env.osx": {
-        "DJANGO_SETTINGS_MODULE": "config.settings",
-        "PYTHONPATH": "${workspaceFolder}:.",
-        "YELP_API_KEY":  // enter the YELP api key here
-    },
-```
-
-5. If you don't know the syntax of Python yet, https://www.youtube.com/watch?v=YYXdXT2l-Gg&list=PL-osiE80TeTskrapNbzXhwoFUiLCjGgY7 is a good start
-
-6. A good resource for writing beautiful Python Code: https://realpython.com/python-pep8/
+## [Development Setup Instructions](https://github.com/greatday4april/what-to-eat-ml-backend/wiki/Development-Setup)
 
 ## run and debug django backend
 
