@@ -17,7 +17,8 @@ class SessionViewSet(viewsets.ViewSet):
             user_id = int(request.query_params.get('user_id'))
             session = Session.find_by_user(user_id)
             if session is None:
-                serializer = SessionSerializer(data={'user_id': user_id})
+                serializer = SessionSerializer(
+                    data={'user_id': user_id, 'page_size': request.query_params.get('page_size')})
                 if not serializer.is_valid():
                     raise APIException(str(serializer.errors))
                 serializer.save()
