@@ -21,7 +21,7 @@ from api.views import SessionViewSet
 urlpatterns = [
     path('', RedirectView.as_view(url='api/session')),
     path(
-        'api/session',
+        'api/session/',
         SessionViewSet.as_view({'get': 'retrieve', 'patch': 'patch'}),
         name='session'
     ),
