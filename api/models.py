@@ -71,11 +71,18 @@ class Session():
 
     @property
     def next_restaurants(self) -> Optional[List[Dict]]:
-        pool = [item for item in self.restaurants if item['id'] not in self.preferences]
+        pool = [item for item in self.restaurants if item['id']
+                not in self.preferences]
         if len(pool) == 0:
             return None
         restaurants = random.choices(pool, k=self.page_size)
-        return [yelp_api_utils.get_business(restaurant['id']) for restaurant in restaurants]
+        return [
+            {
+                **yelp_api_utils.get_business(restaurant['id']),
+                'reviews': yelp_api_utils.get_reviews(restaurant['id'])['reviews']
+            }
+            for restaurant in restaurants
+        ]
 
     def save(self) -> 'Session':
         store = SessionStore(session_key=self.user.session_key)

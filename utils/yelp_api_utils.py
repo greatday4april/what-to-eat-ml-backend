@@ -87,6 +87,11 @@ def get_business(business_id, api_key=API_KEY):
     return request(API_HOST, business_path, api_key)
 
 
+def get_reviews(business_id, api_key=API_KEY):
+    reviews_path = BUSINESS_PATH + business_id + '/reviews'
+    return request(API_HOST, reviews_path, api_key)
+
+
 def query_api(term, location):
     """Queries the API by the input values from the user.
 
