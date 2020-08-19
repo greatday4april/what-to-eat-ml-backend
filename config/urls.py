@@ -26,7 +26,7 @@ urlpatterns = [
         name='session'
     ),
     path(
-        'api/preference',
+        'api/preferences/',
         PreferenceViewSet.as_view({'get': 'list', 'post': 'create'}),
         name='preference'
     )

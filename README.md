@@ -38,6 +38,21 @@ $ git push
 
 Good luck coding! and ... lots of debugging probably.
 
+## Routes
+
+### API Endpoint
+
+Postman Collection: https://www.getpostman.com/collections/4712922ca4a21fcdb2aa
+
+#### Session
+
+* GET `/api/session/` - create or get session, take `user_id` and `page_size`
+
+#### Preference
+* GET `/api/preferences/` - create a user preference, take `user_id`
+* POST `/api/preferences/` - return favorites list, take `user_id`, `type`, `restaurant_id`
+
+
 ## Postgres Database Schema
 
 ### `preference`
