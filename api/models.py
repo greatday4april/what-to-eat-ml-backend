@@ -29,10 +29,10 @@ class User(AbstractBaseUser):
 
 
 class Preference(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    restaurant_id = models.CharField(max_length=120)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=False, default=None)
+    restaurant_id = models.CharField(max_length=120, null=False, default=None)
     type = models.CharField(
-        max_length=60, choices=PreferenceType.choices)
+        max_length=60, choices=PreferenceType.choices, null=False, default=None)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

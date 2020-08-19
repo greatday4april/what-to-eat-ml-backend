@@ -4,6 +4,7 @@ import requests
 import sys
 import os
 import geocoder
+from ratelimit import limits
 from urllib.error import HTTPError
 from urllib.parse import quote
 
@@ -21,6 +22,7 @@ DEFAULT_LOCATION = geocoder.ip('me').latlng
 SEARCH_LIMIT = 50
 
 
+@limits(calls=5, period=1)
 def request(host, path, api_key, url_params=None):
     """Given your API_KEY, send a GET request to the API.
 

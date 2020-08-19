@@ -4,8 +4,8 @@ from rest_framework import viewsets, status
 from rest_framework.exceptions import APIException
 
 
-from api.serializers import SessionSerializer
-from api.models import Session
+from api.serializers import SessionSerializer, PreferenceSerializer
+from api.models import Session, Preference, User
 
 
 class SessionViewSet(viewsets.ViewSet):
@@ -44,5 +44,26 @@ class SessionViewSet(viewsets.ViewSet):
                 return Response(serializer.data, status=status.HTTP_200_OK)
         except Exception as error:
             raise APIException(error)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class PreferenceViewSet(viewsets.ViewSet):
+    serializer_class = PreferenceSerializer
+
+    def list(self, request):
+        user_id = int(request.query_params.get('user_id'))
+        session = Session.find_by_user(user_id)
+        preference_set = session.preferences
+        return preference_set
+
+    def create(self, request):
+        serializer = PreferenceSerializer(
+            data=request.data,
+            partial=True
+        )
+        if serializer.is_valid():
+            serializer.save()
+            return Response(status=status.HTTP_200_OK)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
