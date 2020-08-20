@@ -52,23 +52,32 @@ class PreferenceViewSet(viewsets.ViewSet):
     serializer_class = PreferenceSerializer
 
     def list(self, request):
-        user_id = int(request.query_params.get('user'))
-        session = Session.find_by_user(user_id)
-        arr_preferences = session.preferences.values()
-        preference_set = PreferenceSerializer([Preference for Preference in arr_preferences if Preference.type == "LIKE"], many=True).data
-        return Response(preference_set, status=status.HTTP_200_OK)
+        try:
+            user_id = int(request.query_params.get('user'))
+            session = Session.find_by_user(user_id)
+            arr_preferences = session.preferences.values()
+            preference_set = PreferenceSerializer(
+                [Preference for Preference in arr_preferences if Preference.type == "LIKE"], many=True).data
+            return Response(preference_set, status=status.HTTP_200_OK)
+        except Exception as error:
+            print(error)
+            raise APIException(error)
 
     def create(self, request):
-        serializer = PreferenceSerializer(
-            data=request.data,
-            partial=True
-        )
-        if serializer.is_valid():
-            preference: Preference = serializer.save()
-            user_id = int(request.data.get('user'))
-            session = Session.find_by_user(user_id)
-            session.preferences[preference.restaurant_id] = preference
-            session.save()
-            return Response({'success': True}, status=status.HTTP_200_OK)
+        try:
+            serializer = PreferenceSerializer(
+                data=request.data,
+                partial=True
+            )
+            if serializer.is_valid():
+                preference: Preference = serializer.save()
+                user_id = int(request.data.get('user'))
+                session = Session.find_by_user(user_id)
+                session.preferences[preference.restaurant_id] = preference
+                session.save()
+                return Response({'success': True}, status=status.HTTP_200_OK)
+        except Exception as error:
+            print(error)
+            raise APIException(error)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
