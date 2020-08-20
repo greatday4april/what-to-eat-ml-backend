@@ -139,7 +139,7 @@ CACHES = {
     }
 }
 
-SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
+SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
 
 SESSION_SAVE_EVERY_REQUEST = True
 
