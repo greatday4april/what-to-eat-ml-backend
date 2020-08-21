@@ -7,6 +7,8 @@ from rest_framework.exceptions import APIException
 from api.serializers import SessionSerializer, PreferenceSerializer
 from api.models import Session, Preference
 
+import sys
+
 
 class SessionViewSet(viewsets.ViewSet):
     # Required for the Browsable API renderer to have a nice form.
@@ -28,6 +30,7 @@ class SessionViewSet(viewsets.ViewSet):
             serializer = SessionSerializer(instance=session)
         except Exception as error:
             print(error)
+            sys.stdout.flush()
             raise APIException(error)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -46,6 +49,7 @@ class PreferenceViewSet(viewsets.ViewSet):
             return Response(preference_set, status=status.HTTP_200_OK)
         except Exception as error:
             print(error)
+            sys.stdout.flush()
             raise APIException(error)
 
     def create(self, request):
@@ -65,4 +69,5 @@ class PreferenceViewSet(viewsets.ViewSet):
                                code=status.HTTP_400_BAD_REQUEST)
         except Exception as error:
             print(error)
+            sys.stdout.flush()
             raise APIException(error)
