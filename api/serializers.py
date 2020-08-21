@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from api.models import Session, PreferenceType, Preference
+from api.models import Session, Preference
 from typing import Dict
 
 
@@ -13,15 +13,8 @@ class SessionSerializer(serializers.Serializer):
 
     def create(self, validated_data: Dict) -> Session:
         page_size = validated_data['page_size'] if 'page_size' in validated_data else None
-        session = Session(user_id=validated_data['user_id'], page_size=page_size)
-        session.save()
-        return session
-
-    def update(self, session: Session, validated_data: Dict) -> Session:
-        session.add_preference(
-            validated_data['restaurant_id'],
-            PreferenceType(validated_data['preference_type']),
-        )
+        session = Session(
+            user_id=validated_data['user_id'], page_size=page_size)
         session.save()
         return session
 

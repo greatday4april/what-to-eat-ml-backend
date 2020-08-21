@@ -5,7 +5,7 @@ from rest_framework.exceptions import APIException
 
 
 from api.serializers import SessionSerializer, PreferenceSerializer
-from api.models import Session, Preference, User
+from api.models import Session, Preference
 
 
 class SessionViewSet(viewsets.ViewSet):
@@ -20,32 +20,17 @@ class SessionViewSet(viewsets.ViewSet):
                 serializer = SessionSerializer(
                     data={'user_id': user_id, 'page_size': request.query_params.get('page_size')})
                 if not serializer.is_valid():
-                    raise APIException(str(serializer.errors))
+                    raise APIException(str(serializer.errors),
+                                       code=status.HTTP_400_BAD_REQUEST)
                 serializer.save()
                 return Response(
                     serializer.data, status=status.HTTP_201_CREATED)
             serializer = SessionSerializer(instance=session)
         except Exception as error:
+            print(error)
             raise APIException(error)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
-
-    def patch(self, request):
-        try:
-            user_id = int(request.query_params.get('user_id'))
-            session = Session.find_by_user(user_id)
-            serializer = SessionSerializer(
-                data=request.data,
-                instance=session,
-                partial=True
-            )
-            if serializer.is_valid():
-                serializer.save()
-                return Response(serializer.data, status=status.HTTP_200_OK)
-        except Exception as error:
-            raise APIException(error)
-
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class PreferenceViewSet(viewsets.ViewSet):
@@ -76,8 +61,8 @@ class PreferenceViewSet(viewsets.ViewSet):
                 session.preferences[preference.restaurant_id] = preference
                 session.save()
                 return Response({'success': True}, status=status.HTTP_200_OK)
+            raise APIException(str(serializer.errors),
+                               code=status.HTTP_400_BAD_REQUEST)
         except Exception as error:
             print(error)
             raise APIException(error)
-
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
