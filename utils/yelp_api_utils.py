@@ -19,7 +19,7 @@ BUSINESS_PATH = '/v3/businesses/'  # Business ID will come after slash.
 
 # Default to current ip location
 DEFAULT_TERM = 'chinese'
-DEFAULT_LOCATION = '94404'
+DEFAULT_LOCATION = geocoder.ip('me').latlng
 SEARCH_LIMIT = 50
 
 

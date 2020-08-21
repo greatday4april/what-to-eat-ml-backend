@@ -22,7 +22,7 @@ urlpatterns = [
     path('', RedirectView.as_view(url='api/session')),
     path(
         'api/session/',
-        SessionViewSet.as_view({'get': 'retrieve', 'patch': 'patch'}),
+        SessionViewSet.as_view({'get': 'retrieve'}),
         name='session'
     ),
     path(
