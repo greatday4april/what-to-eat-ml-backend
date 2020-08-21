@@ -7,7 +7,7 @@ import utils.yelp_api_utils as yelp_api_utils
 import json
 import random
 
-from django.contrib.sessions.backends.cache import SessionStore
+from django.contrib.sessions.backends.cached_db import SessionStore
 
 
 # Create your models here.
@@ -29,7 +29,8 @@ class User(AbstractBaseUser):
 
 
 class Preference(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, null=False, default=None)
+    user = models.ForeignKey(
+        User, on_delete=models.CASCADE, null=False, default=None)
     restaurant_id = models.CharField(max_length=120, null=False, default=None)
     type = models.CharField(
         max_length=60, choices=PreferenceType.choices, null=False, default=None)
