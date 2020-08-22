@@ -60,31 +60,24 @@ class Session():
         store = SessionStore(session_key=user.session_key)
         return store['session'] if 'session' in store else None
 
-    def add_preference(self, restaurant_id: str, type: PreferenceType) -> 'Session':
-        pref = Preference(
-            user=self.user,
-            restaurant_id=restaurant_id,
-            type=type,
-        )
-        pref.save()
-        assert(restaurant_id not in self.preferences)
-        self.preferences[restaurant_id] = pref
-        return self
-
     @property
     def next_restaurants(self) -> Optional[List[Dict]]:
         pool = [item for item in self.restaurants if item['id']
                 not in self.preferences]
         if len(pool) == 0:
             return None
-        restaurants = random.choices(pool, k=self.page_size)
-        return [
-            {
-                **yelp_api_utils.get_business(restaurant['id']),
-                'reviews': yelp_api_utils.get_reviews(restaurant['id'])['reviews']
-            }
-            for restaurant in restaurants
-        ]
+        indices = random.choices(range(len(pool)), k=self.page_size)
+        selected_restaurants = []
+        for index in indices:
+            restaurant = self.restaurants[index]
+            if 'reviews' not in restaurant:
+                self.restaurants[index] = {
+                    **yelp_api_utils.get_business(restaurant['id']),
+                    'reviews': yelp_api_utils.get_reviews(restaurant['id'])['reviews']
+                }
+            selected_restaurants.append(self.restaurants[index])
+
+        return selected_restaurants
 
     def save(self) -> 'Session':
         store = SessionStore(session_key=self.user.session_key)

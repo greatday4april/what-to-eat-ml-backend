@@ -39,17 +39,18 @@ class SessionViewSet(viewsets.ViewSet):
                 if not serializer.is_valid():
                     raise APIException(str(serializer.errors),
                                        code=status.HTTP_400_BAD_REQUEST)
-                serializer.save()
-                return Response(
+                response = Response(
                     serializer.data, status=status.HTTP_201_CREATED)
-            serializer = SessionSerializer(instance=session)
+            else:
+                serializer = SessionSerializer(instance=session)
+                response = Response(serializer.data, status=status.HTTP_200_OK)
+            session.save()
+            return response
         except Exception as error:
             print(error)
             raise APIException(error)
         finally:
             sys.stdout.flush()
-
-        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class PreferenceViewSet(viewsets.ViewSet):
