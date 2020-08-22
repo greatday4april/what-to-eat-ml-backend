@@ -130,16 +130,18 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-CACHE_TTL = 60 * 60  # 1 hour
+SESSION_TTL = 60 * 60 * 3  # 1 hour
 
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-        'TIMEOUT': CACHE_TTL,
+        'TIMEOUT': SESSION_TTL,
     }
 }
 
 SESSION_ENGINE = 'django.contrib.sessions.backends.cached_db'
+
+SESSION_SERIALIZER = 'django.contrib.sessions.serializers.PickleSerializer'
 
 SESSION_SAVE_EVERY_REQUEST = True
 

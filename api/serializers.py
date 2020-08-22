@@ -10,11 +10,13 @@ class SessionSerializer(serializers.Serializer):
     page_size = serializers.IntegerField(write_only=True, required=False)
     restaurant_id = serializers.CharField(write_only=True, required=False)
     preference_type = serializers.CharField(write_only=True, required=False)
+    location = serializers.ListField(write_only=True, required=False)
 
     def create(self, validated_data: Dict) -> Session:
         page_size = validated_data['page_size'] if 'page_size' in validated_data else None
+        location = validated_data['location'] if 'location' in validated_data else None
         session = Session(
-            user_id=validated_data['user_id'], page_size=page_size)
+            user_id=validated_data['user_id'], page_size=page_size, location=location)
         session.save()
         return session
 

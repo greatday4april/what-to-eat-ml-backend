@@ -7,7 +7,10 @@ from rest_framework.exceptions import APIException
 from api.serializers import SessionSerializer, PreferenceSerializer
 from api.models import Session, Preference
 
+from ipware import get_client_ip
+
 import sys
+import geocoder
 
 
 class SessionViewSet(viewsets.ViewSet):
@@ -19,8 +22,20 @@ class SessionViewSet(viewsets.ViewSet):
             user_id = int(request.query_params.get('user_id'))
             session = Session.find_by_user(user_id)
             if session is None:
+                ip_address, _is_routable = get_client_ip(request)
+                location = geocoder.ip(ip_address)
+                if not location.lat:
+                    location = geocoder.ip('me')
+                print('create a session for {}, ip: {}'.format(
+                    location.city, ip_address))
+                page_size = request.query_params.get('page_size')
                 serializer = SessionSerializer(
-                    data={'user_id': user_id, 'page_size': request.query_params.get('page_size')})
+                    data={
+                        'user_id': user_id,
+                        'page_size': int(page_size) if page_size else None,
+                        'location': location.latlng
+                    }
+                )
                 if not serializer.is_valid():
                     raise APIException(str(serializer.errors),
                                        code=status.HTTP_400_BAD_REQUEST)
@@ -30,8 +45,9 @@ class SessionViewSet(viewsets.ViewSet):
             serializer = SessionSerializer(instance=session)
         except Exception as error:
             print(error)
-            sys.stdout.flush()
             raise APIException(error)
+        finally:
+            sys.stdout.flush()
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -49,8 +65,9 @@ class PreferenceViewSet(viewsets.ViewSet):
             return Response(preference_set, status=status.HTTP_200_OK)
         except Exception as error:
             print(error)
-            sys.stdout.flush()
             raise APIException(error)
+        finally:
+            sys.stdout.flush()
 
     def create(self, request):
         try:
@@ -69,5 +86,6 @@ class PreferenceViewSet(viewsets.ViewSet):
                                code=status.HTTP_400_BAD_REQUEST)
         except Exception as error:
             print(error)
-            sys.stdout.flush()
             raise APIException(error)
+        finally:
+            sys.stdout.flush()

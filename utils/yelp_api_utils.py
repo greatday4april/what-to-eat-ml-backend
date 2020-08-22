@@ -23,7 +23,7 @@ DEFAULT_LOCATION = geocoder.ip('me').latlng
 SEARCH_LIMIT = 50
 
 
-@on_exception(expo, RateLimitException, max_tries=3)
+@on_exception(expo, RateLimitException, max_time=60)
 @limits(calls=4, period=1)
 def request(host, path, api_key, url_params=None):
     """Given your API_KEY, send a GET request to the API.
@@ -56,7 +56,7 @@ def request(host, path, api_key, url_params=None):
     return data
 
 
-def search(api_key=API_KEY, term=DEFAULT_TERM, location=DEFAULT_LOCATION):
+def search(location, api_key=API_KEY, term=DEFAULT_TERM):
     """Query the Search API by a search term and location.
 
     Args:
@@ -66,8 +66,8 @@ def search(api_key=API_KEY, term=DEFAULT_TERM, location=DEFAULT_LOCATION):
     Returns:
         dict: The JSON response from the request.
     """
-    latitude = DEFAULT_LOCATION[0]
-    longitude = DEFAULT_LOCATION[1]
+    latitude = location[0]
+    longitude = location[1]
     url_params = {
         'term': term.replace(' ', '+'),
         'latitude': latitude,
