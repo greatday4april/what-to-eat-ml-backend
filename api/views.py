@@ -44,7 +44,7 @@ class SessionViewSet(viewsets.ViewSet):
                 return Response(
                     serializer.data, status=status.HTTP_201_CREATED)
             else:
-                if page_size not None:
+                if page_size:
                     session.page_size = page_size
                 serializer = SessionSerializer(instance=session)
                 session.save()
