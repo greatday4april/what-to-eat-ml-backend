@@ -21,6 +21,8 @@ class SessionViewSet(viewsets.ViewSet):
         try:
             user_id = int(request.query_params.get('user_id'))
             session = Session.find_by_user(user_id)
+            page_size = request.query_params.get('page_size')
+            page_size = int(page_size) if page_size else None
             if session is None:
                 ip_address, _is_routable = get_client_ip(request)
                 location = geocoder.ip(ip_address)
@@ -28,11 +30,10 @@ class SessionViewSet(viewsets.ViewSet):
                     location = geocoder.ip('me')
                 print('create a session for {}, ip: {}'.format(
                     location.city, ip_address))
-                page_size = request.query_params.get('page_size')
                 serializer = SessionSerializer(
                     data={
                         'user_id': user_id,
-                        'page_size': int(page_size) if page_size else None,
+                        'page_size': page_size,
                         'location': location.latlng
                     }
                 )
@@ -43,6 +44,8 @@ class SessionViewSet(viewsets.ViewSet):
                 return Response(
                     serializer.data, status=status.HTTP_201_CREATED)
             else:
+                if page_size not None:
+                    session.page_size = page_size
                 serializer = SessionSerializer(instance=session)
                 session.save()
                 return Response(serializer.data, status=status.HTTP_200_OK)
