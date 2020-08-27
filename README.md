@@ -54,7 +54,7 @@ Postman Collection: https://www.getpostman.com/collections/4712922ca4a21fcdb2aa
 
 #### User
 * GET `/api/user/` - return a user, take `user_id`
-* POST `/api/user/` - create a user, take `password`, `cuisine_tags`
+* POST `/api/user/` - create a user, take `cuisine_tags`
 
 ## Postgres Database Schema
 
