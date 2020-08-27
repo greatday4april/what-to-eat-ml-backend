@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from api.models import Session, Preference
+from api.models import Session, Preference, User
 from typing import Dict
 
 
@@ -26,3 +26,9 @@ class PreferenceSerializer(serializers.ModelSerializer):
         model = Preference
         fields = '__all__'
         extra_kwargs = {'user': {'required': False}}
+
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'last_login', 'session_key', 'date_joined', 'cuisine_tags']

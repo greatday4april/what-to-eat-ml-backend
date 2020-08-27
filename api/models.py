@@ -2,6 +2,7 @@ from django.contrib.auth.models import AbstractBaseUser
 from django.db import models
 from typing import List, Dict, Optional
 from config.settings import SESSION_TTL
+from django.contrib.postgres.fields import ArrayField
 import utils.yelp_api_utils as yelp_api_utils
 
 import json
@@ -23,9 +24,17 @@ class User(AbstractBaseUser):
     REQUIRED_FIELDS = []
     session_key = models.CharField(max_length=240, null=True, default=None)
     date_joined = models.DateTimeField(auto_now_add=True)
+    cuisine_tags = ArrayField(
+        models.CharField(max_length=100), null=True, default=None
+    )
 
     def __str__(self):
-        return json.dumps({'id': self.id})
+        return json.dumps({
+            'id': self.id,
+            'last_login': self.last_login,
+            'date_joined': self.date_joined,
+            'session_key': self.session_key,
+            'cusine_tags': self.cuisine_tags})
 
 
 class Preference(models.Model):

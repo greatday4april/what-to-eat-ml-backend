@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.urls import path
 from django.views.generic.base import RedirectView
-from api.views import SessionViewSet, PreferenceViewSet
+from api.views import SessionViewSet, PreferenceViewSet, UserViewSet
 
 
 urlpatterns = [
@@ -29,5 +29,10 @@ urlpatterns = [
         'api/preferences/',
         PreferenceViewSet.as_view({'get': 'list', 'post': 'create'}),
         name='preference'
+    ),
+    path(
+        'api/user/',
+        UserViewSet.as_view({'get': 'retrieve', 'post': 'create'}),
+        name='user'
     )
 ]

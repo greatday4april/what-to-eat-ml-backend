@@ -52,6 +52,9 @@ Postman Collection: https://www.getpostman.com/collections/4712922ca4a21fcdb2aa
 * GET `/api/preferences/` - create a user preference, take `user_id`
 * POST `/api/preferences/` - return favorites list, take `user_id`, `type`, `restaurant_id`
 
+#### User
+* GET `/api/user/` - return a user, take `user_id`
+* POST `/api/user/` - create a user, take `password`, `cuisine_tags`
 
 ## Postgres Database Schema
 

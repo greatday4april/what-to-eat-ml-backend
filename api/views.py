@@ -4,8 +4,8 @@ from rest_framework import viewsets, status
 from rest_framework.exceptions import APIException
 
 
-from api.serializers import SessionSerializer, PreferenceSerializer
-from api.models import Session, Preference
+from api.serializers import SessionSerializer, PreferenceSerializer, UserSerializer
+from api.models import Session, Preference, User
 
 from ipware import get_client_ip
 
@@ -87,6 +87,35 @@ class PreferenceViewSet(viewsets.ViewSet):
                 session.preferences[preference.restaurant_id] = preference
                 session.save()
                 return Response({'success': True}, status=status.HTTP_200_OK)
+            raise APIException(str(serializer.errors),
+                               code=status.HTTP_400_BAD_REQUEST)
+        except Exception as error:
+            print(error)
+            raise APIException(error)
+        finally:
+            sys.stdout.flush()
+
+
+class UserViewSet(viewsets.ViewSet):
+    def retrieve(self, request: Request):
+        try:
+            user_id = int(request.query_params.get('user_id'))
+            user = User.objects.get(id=user_id)
+        except User.DoesNotExist:
+            return Response('User doesn\'t exist', status=status.HTTP_400_BAD_REQUEST)
+        serializer = UserSerializer(user)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def create(self, request):
+        try:
+            serializer = UserSerializer(
+                data=request.data,
+                partial=True
+            )
+            if serializer.is_valid():
+                user: User = serializer.save()
+                return Response({'success': True}, status=status.HTTP_201_CREATED)
             raise APIException(str(serializer.errors),
                                code=status.HTTP_400_BAD_REQUEST)
         except Exception as error:
