@@ -1,77 +1,110 @@
 # %%
 import requests
 import json
+import os
 
 # API constants, you shouldn't have to change these.
-API_KEY = "your-key”
-API_HOST = 'https://us-restaurant-menus.p.rapidapi.com'
-SEARCH_PATH = '/restaurants/search'
+# API_KEY = os.environ["RAKUTEN_API_KEY"]
+API_KEY = os.environ['RAKUTEN_API_KEY']
+API_HOST = "https://us-restaurant-menus.p.rapidapi.com"
+SEARCH_PATH = "/restaurants/search/geo"
+DEFAULT_LOCATION = [38.898689814814816, -77.03749537037038]
 
 
-def get_restaurants_info():
-    # get resturants by location, should have parameters as location
+def request(host, path, api_key, url_params=None):
+    """Given your API_KEY, send a GET request to the API.
+
+    Args:
+        host (str): The domain host of the API.
+        path (str): The path of the API after the domain.
+        API_KEY (str): Your API Key.
+        url_params (dict): An optional set of query parameters in the request.
+
+    Returns:
+        dict: The JSON response from the request.
+
+    Raises:
+        HTTPError: An error occurs from the HTTP request.
+    """
+    url_params = url_params or {}
+    url = '{0}{1}'.format(host, path)
     headers = {
-        'x-rapidapi-host': API_HOST,
-        'x-rapidapi-key': API_KEY,
+        'x-rapidapi-host': "us-restaurant-menus.p.rapidapi.com",
+        'x-rapidapi-key': api_key,
     }
-    querystring = {"page": "1"}
-    url2 = API_HOST + SEARCH_PATH + "/geo?lat=40.688072&lon=-73.997385&distance=0.3"
-    response_res = requests.request(
-        "GET", url2, headers=headers, params=querystring)
-    restaurants_info_json = json.loads(response_res.text)
 
-    return restaurants_info_json
+    print(u'Querying {0} ...'.format(url))
 
+    response = requests.request('GET', url, headers=headers, params=url_params)
 
-def get_ids_from_resonse(response_info_json):
-    # get 25 resturant ids from above response
-    if 'result' in response_info_json:
-        restaurants_data_list = response_info_json['result']['data']
-        ids = map(lambda x: x['restaurant_id'], restaurants_data_list)
-        return list(ids)
-    else:
-        return []
+    data = json.loads(response.text)
+    if 'error' in data:
+        raise Exception(str(data))
+    return data
 
 
-def remove_numbers(string):
-    # remove words that contain numbers
-    output = ""
-    words = string.split()
-    for word in words:
-        if word.isalpha():
-            output += " " + word
-    return output
+def get_restaurants(location=DEFAULT_LOCATION, api_key=API_KEY):
+    """Given location, get all nearby (whitin 0.3 mile) restaurants
+
+    Args:
+        location (list): geological location of user in the form of [lat, lon].
+
+    Returns:
+        dict: JSON response containing information of nearby resturants.
+    """
+    latitude, longtitude = location[0], location[1]
+    url_params = {"page": "1", "lon": longtitude, "lat": latitude, "distance": "0.3"}
+
+    return request(API_HOST, SEARCH_PATH, api_key, url_params=url_params)
 
 
-def get_restaurant_menu_items_from_ids(ids):
-    # for each id get its menu items string
-    menu_items = []
-    for id in ids:
-        menu_items_string = get_menu_items_string(id)
-        clean_menu_items_string = remove_numbers(menu_items_string)
-        menu_items.append(clean_menu_items_string)
+def get_menus(id, api_key=API_KEY):
+    """Given restaurants id, get menu items of the resturant.
 
-    return menu_items
+    Args:
+        id (int): id of the resturant.
 
+    Returns:
+        dict: JSON response containing menu infos of the restaurant.
+    """
+    path = "/restaurant/" + str(id) + "/menuitems"
 
-def get_menu_items_string(id):
-    # get menu items json by restaurant id
-    headers = {
-        'x-rapidapi-host': API_HOST,
-        'x-rapidapi-key': API_KEY,
-    }
-    url = API_HOST + "/restaurant/" + str(id) + "/menuitems"
-    response_menu = requests.request("GET", url, headers=headers)
-    response_menu_json = json.loads(response_menu.text)
-
-    # bonding all menu_item_name to form a description of the restaurant
-    menu_item_string = ""
-    if 'result' in response_menu_json:
-        for menu_item in response_menu_json['result']['data']:
-            menu_item_name = menu_item['menu_item_name']
-            menu_item_string += " " + menu_item_name
-
-    return menu_item_string
+    return request(API_HOST, path, api_key, url_params=None)
 
 
-# %%
+# def get_ids_from_resonse(response_info_json):
+#     # get 25 resturant ids from above response
+#     if 'result' in response_info_json:
+#         restaurants_data_list = response_info_json['result']['data']
+#         ids = map(lambda x: x['restaurant_id'], restaurants_data_list)
+#         return list(ids)
+#     else:
+#         return []
+
+
+# def get_restaurant_menu_items_from_ids(ids):
+#     # for each id get its menu items string
+#     menu_items = []
+#     for id in ids:
+#         response_menu_json = get_menus(id)
+
+#         # bonding all menu_item_name to form a description of the restaurant
+#         menu_item_string = ""
+#         if 'result' in response_menu_json:
+#             for menu_item in response_menu_json['result']['data']:
+#                 menu_item_name = menu_item['menu_item_name']
+#                 menu_item_string += " " + menu_item_name
+        
+#         menu_items.append(menu_items_string)
+
+#     return menu_items
+
+
+def main():
+    data = get_restaurants()
+    rests = data['result']['data']
+    result = map(lambda x: x['restaurant_name'], rests)
+    print(sorted(list(result)))
+
+if __name__ == '__main__':
+    main()

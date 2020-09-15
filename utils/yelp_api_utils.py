@@ -19,7 +19,8 @@ BUSINESS_PATH = '/v3/businesses/'  # Business ID will come after slash.
 
 # Default to current ip location
 DEFAULT_TERM = 'chinese'
-DEFAULT_LOCATION = geocoder.ip('me').latlng
+# DEFAULT_LOCATION = geocoder.ip('me').latlng
+DEFAULT_LOCATION = [38.898689814814816, -77.03749537037038]
 SEARCH_LIMIT = 50
 
 
@@ -146,4 +147,8 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    res = search(location=DEFAULT_LOCATION)
+    # rests = res['businesses']
+    # result = map(lambda x: x['name'], rests)
+    # print(sorted(list(result)))
+    print(res)
