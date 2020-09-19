@@ -82,7 +82,7 @@ def main():
     corpus = [
         "aaa bbb b12 ccc",
         "ccc ddd e43",
-        "aaa ccc ddd bbb bbb",
+        "aaa ccc ddd bbb bbb ",
         "bbb bbb ddd aaa e43"
     ]
     ids = [1, 2, 3, 4]
