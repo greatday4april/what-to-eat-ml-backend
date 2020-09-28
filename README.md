@@ -5,6 +5,7 @@ Backend for a ML-based restaurant recommendation app
 ![Anurag's github stats](https://github-readme-stats.vercel.app/api?username=greatday4april&show_icons=true&theme=radical&count_private=true)
 
 Mobile repository : https://github.com/kuanghsuan/what-to-eat-mobile
+## Launched in [Google Play](https://play.google.com/store/apps/details?id=com.ELEPHANT_BOX.what_to_eat)
 
 ## [Development Setup Instructions](https://github.com/greatday4april/what-to-eat-ml-backend/wiki/Development-Setup)
 
