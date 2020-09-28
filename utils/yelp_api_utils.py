@@ -3,7 +3,7 @@ import pprint
 import requests
 import sys
 import os
-import geocoder
+from functools import lru_cache
 from ratelimit import limits, RateLimitException
 from backoff import on_exception, expo
 from urllib.error import HTTPError
@@ -57,6 +57,7 @@ def request(host, path, api_key, url_params=None):
     return data
 
 
+@lru_cache()
 def search(location, api_key=API_KEY, term=DEFAULT_TERM):
     """Query the Search API by a search term and location.
 
@@ -78,6 +79,7 @@ def search(location, api_key=API_KEY, term=DEFAULT_TERM):
     return request(API_HOST, SEARCH_PATH, api_key, url_params=url_params)
 
 
+@lru_cache()
 def get_business(business_id, api_key=API_KEY):
     """Query the Business API by a business ID.
 
@@ -92,11 +94,13 @@ def get_business(business_id, api_key=API_KEY):
     return request(API_HOST, business_path, api_key)
 
 
+@lru_cache()
 def get_reviews(business_id, api_key=API_KEY):
     reviews_path = BUSINESS_PATH + business_id + '/reviews'
     return request(API_HOST, reviews_path, api_key)
 
 
+@lru_cache()
 def query_api(term, location):
     """Queries the API by the input values from the user.
 

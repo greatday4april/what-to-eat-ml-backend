@@ -3,10 +3,16 @@ from django.db import models
 from typing import List, Dict, Optional
 from config.settings import SESSION_TTL
 from django.contrib.postgres.fields import ArrayField
+from collections import defaultdict
+from ordered_set import OrderedSet
+
 import utils.yelp_api_utils as yelp_api_utils
+import utils.rakuten_menu_api_utils as rakuten_menu_api_utils
+from recommender import get_similar_restaurant_ids
 
 import json
 import random
+import datetime
 
 from django.contrib.sessions.backends.cached_db import SessionStore
 
@@ -56,12 +62,30 @@ class Preference(models.Model):
 
 class Session():
     def __init__(self, user_id: int, page_size: Optional[int], location: Optional[List]):
-        yelp_response = yelp_api_utils.search(
-            location=location).get('businesses')
         self.user = User.objects.get(id=user_id)
         self.page_size = page_size if page_size else 2
         self.preferences: Dict[str, Preference] = {}
-        self.restaurants: List[Dict] = list(yelp_response)
+        self.restaurants: List[Dict] = list(
+            rakuten_menu_api_utils.search(location)
+        )
+        self.random = random
+        self.random.seed(datetime.datetime.weekday())
+        self.favorites = defaultdict(int)
+        self.dislikes = defaultdict(int)
+        self.__update_restaurant_pool()
+
+    def __update_restaurant_pool(self):
+        user_preferences = Preference.objects.filter(user=self.user).all()
+        for user_preference in user_preferences:
+            if user_preference.type == PreferenceType.LIKE:
+                self.favorites[user_preference.restaurant_id] += 1
+            elif user_preference.type == PreferenceType.DISLIKE:
+                self.favorites[user_preference.restaurant_id] -= 1
+        for key, value in self.favorites.items():
+            if value <= 0:
+                if value < 0:
+                    self.dislikes[key] = value
+                del self.favorites[key]
 
     @staticmethod
     def find_by_user(user_id: int) -> Optional['Session']:
@@ -71,22 +95,27 @@ class Session():
 
     @property
     def next_restaurants(self) -> Optional[List[Dict]]:
-        pool = [item for item in self.restaurants if item['id']
-                not in self.preferences]
-        if len(pool) == 0:
+        favorites_count = len(self.favorites)
+        if favorites_count == 0:
             return None
-        indices = random.choices(range(len(pool)), k=self.page_size)
-        selected_restaurants = []
-        for index in indices:
-            restaurant = self.restaurants[index]
-            if 'reviews' not in restaurant:
-                self.restaurants[index] = {
-                    **yelp_api_utils.get_business(restaurant['id']),
-                    'reviews': yelp_api_utils.get_reviews(restaurant['id'])['reviews']
-                }
-            selected_restaurants.append(self.restaurants[index])
+        reference_restaurant_ids = self.random.choices(
+            self.favorites.keys,
+            weights=self.favorites.values,
+            k=(7 if favorites_count >= 7 else favorites_count)
+        )
+        candidate_ids = [candidate['restaurant_id']
+                         for candidate in self.restaurants]
+        candidate_ids = [
+            candidate_id for candidate_id in candidate_ids if candidate_id not in self.preferences
+        ]
+        recommended_restaurant_ids = [get_similar_restaurant_ids(reference_id, candidate_ids) for reference_id in reference_restaurant_ids]
+        recommended_restaurant_ids = list(OrderedSet(
+            [id for sublist in recommended_restaurant_ids for id in sublist]))
 
-        return selected_restaurants
+        return [{
+            **yelp_api_utils.get_business(id),
+            'reviews': yelp_api_utils.get_reviews(id)['reviews']
+        } for id in recommended_restaurant_ids]
 
     def save(self) -> 'Session':
         store = SessionStore(session_key=self.user.session_key)
@@ -95,4 +124,5 @@ class Session():
         store.save()
         self.user.session_key = store.session_key
         self.user.save()
+        self.__update_restaurant_pool()
         return self

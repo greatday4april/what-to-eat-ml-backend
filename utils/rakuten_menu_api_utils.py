@@ -3,6 +3,8 @@ import requests
 import json
 import os
 
+from functools import lru_cache
+
 # API constants, you shouldn't have to change these.
 # API_KEY = os.environ["RAKUTEN_API_KEY"]
 API_KEY = os.environ['RAKUTEN_API_KEY']
@@ -43,8 +45,8 @@ def request(host, path, api_key, url_params=None):
     return data
 
 
-def get_restaurants(location=DEFAULT_LOCATION, api_key=API_KEY):
-    """Given location, get all nearby (whitin 0.3 mile) restaurants
+def search(location=DEFAULT_LOCATION, api_key=API_KEY):
+    """Given location, get all nearby (whitin 5 mile) restaurants
 
     Args:
         location (list): geological location of user in the form of [lat, lon].
@@ -53,11 +55,12 @@ def get_restaurants(location=DEFAULT_LOCATION, api_key=API_KEY):
         dict: JSON response containing information of nearby resturants.
     """
     latitude, longtitude = location[0], location[1]
-    url_params = {"page": "1", "lon": longtitude, "lat": latitude, "distance": "0.3"}
+    url_params = {"page": "1", "lon": longtitude, "lat": latitude, "distance": "5"}
 
-    return request(API_HOST, SEARCH_PATH, api_key, url_params=url_params)
+    return request(API_HOST, SEARCH_PATH, api_key, url_params=url_params)['result']['data']
 
 
+@lru_cache()
 def get_menus(id, api_key=API_KEY):
     """Given restaurants id, get menu items of the resturant.
 
@@ -69,7 +72,7 @@ def get_menus(id, api_key=API_KEY):
     """
     path = "/restaurant/" + str(id) + "/menuitems"
 
-    return request(API_HOST, path, api_key, url_params=None)
+    return request(API_HOST, path, api_key, url_params=None)['result']['data']
 
 
 # def get_ids_from_resonse(response_info_json):
@@ -94,17 +97,15 @@ def get_menus(id, api_key=API_KEY):
 #             for menu_item in response_menu_json['result']['data']:
 #                 menu_item_name = menu_item['menu_item_name']
 #                 menu_item_string += " " + menu_item_name
-        
+
 #         menu_items.append(menu_items_string)
 
 #     return menu_items
 
 
 def main():
-    data = get_restaurants()
-    rests = data['result']['data']
-    result = map(lambda x: x['restaurant_name'], rests)
-    print(sorted(list(result)))
+    data = search()
+    print(sorted([restaurant['restaurant_name'] for restaurant in data]))
 
 if __name__ == '__main__':
     main()

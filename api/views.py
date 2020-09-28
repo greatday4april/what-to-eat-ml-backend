@@ -114,7 +114,7 @@ class UserViewSet(viewsets.ViewSet):
                 partial=True
             )
             if serializer.is_valid():
-                user: User = serializer.save()
+                serializer.save()
                 return Response({'success': True}, status=status.HTTP_201_CREATED)
             raise APIException(str(serializer.errors),
                                code=status.HTTP_400_BAD_REQUEST)
